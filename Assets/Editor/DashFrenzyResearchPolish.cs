@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using System.Collections.Generic;
 using System.IO;
 
 public class DashFrenzyResearchPolish
