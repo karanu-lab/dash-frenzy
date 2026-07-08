@@ -62,10 +62,10 @@ public class DashFrenzyTrashDashIntegrator
             return;
         }
 
-        EditorUtility.DisplayProgressBar("Integrating Trash Dash", "Building Obstacle Prefabs...", 0.2f);
+        EditorUtility.DisplayProgressBar("Integrating Trash Dash", "Building Obstacle Prefabs...", 0.15f);
         List<GameObject> obstaclePrefabs = SetupObstacles();
 
-        EditorUtility.DisplayProgressBar("Integrating Trash Dash", "Decorating Road Tracks with Buildings...", 0.6f);
+        EditorUtility.DisplayProgressBar("Integrating Trash Dash", "Decorating Road Tracks with Buildings...", 0.4f);
         DecorateTrackWithRoadsAndBuildings();
 
         // Wire to spawner in the scene
@@ -86,6 +86,11 @@ public class DashFrenzyTrashDashIntegrator
             EditorUtility.SetDirty(player);
             Debug.Log("✅ Player (Max) aligned to start position (0, 1, 0).");
         }
+
+        EditorUtility.DisplayProgressBar("Integrating Trash Dash", "Upgrading materials to URP & fixing skybox...", 0.75f);
+        UpgradeAllSceneMaterialsToURP();
+        FixSkybox();
+        CreateHeartSprite();
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -308,16 +313,8 @@ public class DashFrenzyTrashDashIntegrator
             cubeRenderer.sharedMaterial = roadMat;
         }
 
-        // 2. Add imported road mesh as decoration (if available, positioned slightly higher to overlay textures)
-        string roadPath = FirstExistingAsset(roadMeshes, tileIndex);
-        GameObject roadDeco = InstantiateAssetChild(roadPath, tileObj.transform, "Visual_RoadDeco");
-        if (roadDeco != null)
-        {
-            roadDeco.transform.localPosition = new Vector3(0f, 0.005f, TileLength * 0.5f);
-            roadDeco.transform.localRotation = Quaternion.identity;
-            roadDeco.transform.localScale = Vector3.one;
-            DisableChildColliders(roadDeco);
-        }
+        // Road decoration meshes removed — they were misaligned and overlapping.
+        // The procedural cube road surface above is the sole visual ground.
     }
 
     static void BuildSideEdges(GameObject tileObj, string[] wallMeshes, int tileIndex)
@@ -588,5 +585,162 @@ public class DashFrenzyTrashDashIntegrator
         EditorUtility.DisplayDialog("Validation Complete",
             "Corridor validation checks run. Inspect the Console tab for detail logs, warnings, or errors.",
             "OK");
+    }
+
+    // ============================================================
+    //  UPGRADE ALL SCENE MATERIALS TO URP
+    // ============================================================
+    static void UpgradeAllSceneMaterialsToURP()
+    {
+        int upgraded = 0;
+        Renderer[] allRenderers = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
+        Shader urpLit = Shader.Find("Universal Render Pipeline/Lit");
+
+        if (urpLit == null)
+        {
+            Debug.LogWarning("URP/Lit shader not found. Material upgrade skipped.");
+            return;
+        }
+
+        foreach (Renderer r in allRenderers)
+        {
+            foreach (Material m in r.sharedMaterials)
+            {
+                if (m != null && !m.shader.name.Contains("Universal") &&
+                    !m.shader.name.Contains("Skybox") &&
+                    !m.shader.name.Contains("UI") &&
+                    !m.shader.name.Contains("Sprites") &&
+                    !m.shader.name.Contains("Particle"))
+                {
+                    // Preserve the base color/texture before switching
+                    Color baseColor = Color.white;
+                    Texture mainTex = null;
+
+                    if (m.HasProperty("_Color"))
+                        baseColor = m.GetColor("_Color");
+                    if (m.HasProperty("_MainTex"))
+                        mainTex = m.GetTexture("_MainTex");
+
+                    m.shader = urpLit;
+
+                    if (m.HasProperty("_BaseColor"))
+                        m.SetColor("_BaseColor", baseColor);
+                    if (m.HasProperty("_BaseMap") && mainTex != null)
+                        m.SetTexture("_BaseMap", mainTex);
+
+                    upgraded++;
+                }
+            }
+        }
+
+        Debug.Log("✅ Upgraded " + upgraded + " materials to URP/Lit.");
+    }
+
+    // ============================================================
+    //  FIX SKYBOX — Clean blue procedural sky
+    // ============================================================
+    static void FixSkybox()
+    {
+        string matPath = "Assets/Settings/CartoonSkybox.mat";
+        Material skyMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+
+        Shader skyShader = Shader.Find("Skybox/Procedural");
+        if (skyShader == null)
+        {
+            Debug.LogWarning("Skybox/Procedural shader not found.");
+            return;
+        }
+
+        if (skyMat == null)
+        {
+            skyMat = new Material(skyShader);
+            AssetDatabase.CreateAsset(skyMat, matPath);
+        }
+
+        skyMat.shader = skyShader;  // Force correct shader even if it was corrupted
+        skyMat.SetColor("_SkyTint", new Color(0.35f, 0.55f, 0.9f));     // Clean sky blue
+        skyMat.SetColor("_GroundColor", new Color(0.65f, 0.75f, 0.85f)); // Soft horizon
+        skyMat.SetFloat("_SunSize", 0.04f);
+        skyMat.SetFloat("_AtmosphereThickness", 1.0f);
+        skyMat.SetFloat("_Exposure", 1.3f);
+        EditorUtility.SetDirty(skyMat);
+
+        RenderSettings.skybox = skyMat;
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+        RenderSettings.ambientSkyColor = new Color(0.6f, 0.75f, 0.95f);      // Cool blue from above
+        RenderSettings.ambientEquatorColor = new Color(0.85f, 0.85f, 0.8f);  // Warm neutral at horizon
+        RenderSettings.ambientGroundColor = new Color(0.4f, 0.35f, 0.3f);    // Dark brown below
+        DynamicGI.UpdateEnvironment();
+        Debug.Log("✅ Skybox fixed to clean blue sky.");
+    }
+
+    // ============================================================
+    //  CREATE HEART SPRITE for Lives UI
+    // ============================================================
+    static void CreateHeartSprite()
+    {
+        string spritePath = "Assets/UI/HeartSprite.png";
+        if (AssetDatabase.LoadAssetAtPath<Texture2D>(spritePath) != null)
+        {
+            Debug.Log("Heart sprite already exists.");
+            return;
+        }
+
+        // Generate a simple 64x64 red heart texture
+        int size = 64;
+        Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color clear = new Color(0, 0, 0, 0);
+        Color heartRed = new Color(0.9f, 0.15f, 0.2f, 1f);
+
+        // Fill transparent
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+                tex.SetPixel(x, y, clear);
+
+        // Draw heart shape using math
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                // Normalize to -1..1
+                float nx = (x - size * 0.5f) / (size * 0.5f);
+                float ny = (y - size * 0.5f) / (size * 0.5f);
+                ny -= 0.1f; // shift down slightly
+
+                // Heart implicit equation: (x^2 + y^2 - 1)^3 - x^2 * y^3 < 0
+                float x2 = nx * nx;
+                float y2 = ny * ny;
+                float eq = (x2 + y2 - 1f);
+                eq = eq * eq * eq - x2 * ny * ny * ny;
+
+                if (eq < 0f)
+                {
+                    tex.SetPixel(x, y, heartRed);
+                }
+            }
+        }
+
+        tex.Apply();
+
+        // Save as PNG
+        byte[] pngBytes = tex.EncodeToPNG();
+        string fullPath = Path.Combine(Application.dataPath, "UI/HeartSprite.png");
+        string dir = Path.GetDirectoryName(fullPath);
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+        File.WriteAllBytes(fullPath, pngBytes);
+        Object.DestroyImmediate(tex);
+
+        AssetDatabase.Refresh();
+
+        // Configure as Sprite
+        TextureImporter importer = AssetImporter.GetAtPath(spritePath) as TextureImporter;
+        if (importer != null)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.SaveAndReimport();
+        }
+
+        Debug.Log("✅ Heart sprite created at " + spritePath);
     }
 }
