@@ -1,110 +1,275 @@
 fileFormatVersion: 2
 guid: 97d3d75c59ef7f544808ac9ea51905f2
-timeCreated: 1465471433
-licenseType: Store
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87901
+  packageName: Endless Runner - Sample Game
+  packageVersion: 1.97.1
+  assetPath: Assets/Animation/Rat_Death.fbx
+  uploadId: 518529
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: Controls
-    100002: Head
-    100004: Hips
-    100006: LeftArm
-    100008: LeftEar
-    100010: LeftEarEnd
-    100012: LeftFoot
-    100014: LeftFootEnd
-    100016: LeftForeArm
-    100018: LeftHand
-    100020: LeftHandEnd
-    100022: LeftLeg
-    100024: LeftLegMiddle
-    100026: LeftShoulder
-    100028: LeftUpLeg
-    100030: Nose
-    100032: NoseEnd
-    100034: //RootNode
-    100036: RightArm
-    100038: RightEar
-    100040: RightEarEnd
-    100042: RightFoot
-    100044: RightFootEnd
-    100046: RightForeArm
-    100048: RightHand
-    100050: RightHandEnd
-    100052: RightLeg
-    100054: RightLegMiddle
-    100056: RightShoulder
-    100058: RightUpLeg
-    100060: Skeleton
-    100062: Spine1
-    100064: Spine2
-    100066: Tail1
-    100068: Tail2
-    100070: Tail3
-    100072: TailEnd
-    400000: Controls
-    400002: Head
-    400004: Hips
-    400006: LeftArm
-    400008: LeftEar
-    400010: LeftEarEnd
-    400012: LeftFoot
-    400014: LeftFootEnd
-    400016: LeftForeArm
-    400018: LeftHand
-    400020: LeftHandEnd
-    400022: LeftLeg
-    400024: LeftLegMiddle
-    400026: LeftShoulder
-    400028: LeftUpLeg
-    400030: Nose
-    400032: NoseEnd
-    400034: //RootNode
-    400036: RightArm
-    400038: RightEar
-    400040: RightEarEnd
-    400042: RightFoot
-    400044: RightFootEnd
-    400046: RightForeArm
-    400048: RightHand
-    400050: RightHandEnd
-    400052: RightLeg
-    400054: RightLegMiddle
-    400056: RightShoulder
-    400058: RightUpLeg
-    400060: Skeleton
-    400062: Spine1
-    400064: Spine2
-    400066: Tail1
-    400068: Tail2
-    400070: Tail3
-    400072: TailEnd
-    7400000: Rat_Death
-    9500000: //RootNode
+  serializedVersion: 24501
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Controls
+  - first:
+      1: 100002
+    second: Head
+  - first:
+      1: 100004
+    second: Hips
+  - first:
+      1: 100006
+    second: LeftArm
+  - first:
+      1: 100008
+    second: LeftEar
+  - first:
+      1: 100010
+    second: LeftEarEnd
+  - first:
+      1: 100012
+    second: LeftFoot
+  - first:
+      1: 100014
+    second: LeftFootEnd
+  - first:
+      1: 100016
+    second: LeftForeArm
+  - first:
+      1: 100018
+    second: LeftHand
+  - first:
+      1: 100020
+    second: LeftHandEnd
+  - first:
+      1: 100022
+    second: LeftLeg
+  - first:
+      1: 100024
+    second: LeftLegMiddle
+  - first:
+      1: 100026
+    second: LeftShoulder
+  - first:
+      1: 100028
+    second: LeftUpLeg
+  - first:
+      1: 100030
+    second: Nose
+  - first:
+      1: 100032
+    second: NoseEnd
+  - first:
+      1: 100034
+    second: //RootNode
+  - first:
+      1: 100036
+    second: RightArm
+  - first:
+      1: 100038
+    second: RightEar
+  - first:
+      1: 100040
+    second: RightEarEnd
+  - first:
+      1: 100042
+    second: RightFoot
+  - first:
+      1: 100044
+    second: RightFootEnd
+  - first:
+      1: 100046
+    second: RightForeArm
+  - first:
+      1: 100048
+    second: RightHand
+  - first:
+      1: 100050
+    second: RightHandEnd
+  - first:
+      1: 100052
+    second: RightLeg
+  - first:
+      1: 100054
+    second: RightLegMiddle
+  - first:
+      1: 100056
+    second: RightShoulder
+  - first:
+      1: 100058
+    second: RightUpLeg
+  - first:
+      1: 100060
+    second: Skeleton
+  - first:
+      1: 100062
+    second: Spine1
+  - first:
+      1: 100064
+    second: Spine2
+  - first:
+      1: 100066
+    second: Tail1
+  - first:
+      1: 100068
+    second: Tail2
+  - first:
+      1: 100070
+    second: Tail3
+  - first:
+      1: 100072
+    second: TailEnd
+  - first:
+      4: 400000
+    second: Controls
+  - first:
+      4: 400002
+    second: Head
+  - first:
+      4: 400004
+    second: Hips
+  - first:
+      4: 400006
+    second: LeftArm
+  - first:
+      4: 400008
+    second: LeftEar
+  - first:
+      4: 400010
+    second: LeftEarEnd
+  - first:
+      4: 400012
+    second: LeftFoot
+  - first:
+      4: 400014
+    second: LeftFootEnd
+  - first:
+      4: 400016
+    second: LeftForeArm
+  - first:
+      4: 400018
+    second: LeftHand
+  - first:
+      4: 400020
+    second: LeftHandEnd
+  - first:
+      4: 400022
+    second: LeftLeg
+  - first:
+      4: 400024
+    second: LeftLegMiddle
+  - first:
+      4: 400026
+    second: LeftShoulder
+  - first:
+      4: 400028
+    second: LeftUpLeg
+  - first:
+      4: 400030
+    second: Nose
+  - first:
+      4: 400032
+    second: NoseEnd
+  - first:
+      4: 400034
+    second: //RootNode
+  - first:
+      4: 400036
+    second: RightArm
+  - first:
+      4: 400038
+    second: RightEar
+  - first:
+      4: 400040
+    second: RightEarEnd
+  - first:
+      4: 400042
+    second: RightFoot
+  - first:
+      4: 400044
+    second: RightFootEnd
+  - first:
+      4: 400046
+    second: RightForeArm
+  - first:
+      4: 400048
+    second: RightHand
+  - first:
+      4: 400050
+    second: RightHandEnd
+  - first:
+      4: 400052
+    second: RightLeg
+  - first:
+      4: 400054
+    second: RightLegMiddle
+  - first:
+      4: 400056
+    second: RightShoulder
+  - first:
+      4: 400058
+    second: RightUpLeg
+  - first:
+      4: 400060
+    second: Skeleton
+  - first:
+      4: 400062
+    second: Spine1
+  - first:
+      4: 400064
+    second: Spine2
+  - first:
+      4: 400066
+    second: Tail1
+  - first:
+      4: 400068
+    second: Tail2
+  - first:
+      4: 400070
+    second: Tail3
+  - first:
+      4: 400072
+    second: TailEnd
+  - first:
+      74: 7400000
+    second: Rat_Death
+  - first:
+      95: 9500000
+    second: //RootNode
+  externalObjects: {}
   materials:
-    importMaterials: 1
-    materialName: 0
-    materialSearch: 1
+    materialImportMode: 2
+    materialName: 1
+    materialSearch: 2
+    materialLocation: 0
+    searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Rat_Death
       takeName: Take 001
+      internalID: 0
       firstFrame: 0
       lastFrame: 20
       wrapMode: 0
@@ -210,26 +375,55 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 1
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -239,22 +433,20 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 87901
-  packageName: Endless Runner - Sample Game
-  packageVersion: 1.97.1
-  assetPath: Assets/Animation/Rat_Death.fbx
-  uploadId: 518529

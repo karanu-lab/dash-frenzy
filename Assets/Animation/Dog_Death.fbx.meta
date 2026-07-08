@@ -1,118 +1,299 @@
 fileFormatVersion: 2
 guid: 5bedcafb25855d84394b9b7eb5869bc4
-timeCreated: 1465480747
-licenseType: Store
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87901
+  packageName: Endless Runner - Sample Game
+  packageVersion: 1.97.1
+  assetPath: Assets/Animation/Dog_Death.fbx
+  uploadId: 518529
 ModelImporter:
-  serializedVersion: 19
-  fileIDToRecycleName:
-    100000: Controls
-    100002: //RootNode
-    100004: Eyes
-    100006: Head
-    100008: HeadEnd
-    100010: LeftArm
-    100012: LeftEar
-    100014: LeftEarEnd
-    100016: LeftFoot
-    100018: LeftFootEnd
-    100020: LeftHand
-    100022: LeftHandEnd
-    100024: LeftHip
-    100026: LeftLeg1
-    100028: LeftLeg2
-    100030: LeftLeg3
-    100032: LeftShoulder
-    100034: LeftUpperArm
-    100036: Mouth
-    100038: MouthEnd
-    100040: Neck
-    100042: Pelvis
-    100044: RightArm
-    100046: RightEar
-    100048: RightEarEnd
-    100050: RightFoot
-    100052: RightFootEnd
-    100054: RightHand
-    100056: RightHandEnd
-    100058: RightHip
-    100060: RightLeg1
-    100062: RightLeg2
-    100064: RightLeg3
-    100066: RightShoulder
-    100068: RightUpperArm
-    100070: Skeleton
-    100072: Spine
-    100074: Tail1
-    100076: Tail2
-    100078: Tail3
-    100080: Tail3 1
-    400000: Controls
-    400002: //RootNode
-    400004: Eyes
-    400006: Head
-    400008: HeadEnd
-    400010: LeftArm
-    400012: LeftEar
-    400014: LeftEarEnd
-    400016: LeftFoot
-    400018: LeftFootEnd
-    400020: LeftHand
-    400022: LeftHandEnd
-    400024: LeftHip
-    400026: LeftLeg1
-    400028: LeftLeg2
-    400030: LeftLeg3
-    400032: LeftShoulder
-    400034: LeftUpperArm
-    400036: Mouth
-    400038: MouthEnd
-    400040: Neck
-    400042: Pelvis
-    400044: RightArm
-    400046: RightEar
-    400048: RightEarEnd
-    400050: RightFoot
-    400052: RightFootEnd
-    400054: RightHand
-    400056: RightHandEnd
-    400058: RightHip
-    400060: RightLeg1
-    400062: RightLeg2
-    400064: RightLeg3
-    400066: RightShoulder
-    400068: RightUpperArm
-    400070: Skeleton
-    400072: Spine
-    400074: Tail1
-    400076: Tail2
-    400078: Tail3
-    400080: Tail3 1
-    7400000: Dog_Death
-    9500000: //RootNode
+  serializedVersion: 24501
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Controls
+  - first:
+      1: 100002
+    second: //RootNode
+  - first:
+      1: 100004
+    second: Eyes
+  - first:
+      1: 100006
+    second: Head
+  - first:
+      1: 100008
+    second: HeadEnd
+  - first:
+      1: 100010
+    second: LeftArm
+  - first:
+      1: 100012
+    second: LeftEar
+  - first:
+      1: 100014
+    second: LeftEarEnd
+  - first:
+      1: 100016
+    second: LeftFoot
+  - first:
+      1: 100018
+    second: LeftFootEnd
+  - first:
+      1: 100020
+    second: LeftHand
+  - first:
+      1: 100022
+    second: LeftHandEnd
+  - first:
+      1: 100024
+    second: LeftHip
+  - first:
+      1: 100026
+    second: LeftLeg1
+  - first:
+      1: 100028
+    second: LeftLeg2
+  - first:
+      1: 100030
+    second: LeftLeg3
+  - first:
+      1: 100032
+    second: LeftShoulder
+  - first:
+      1: 100034
+    second: LeftUpperArm
+  - first:
+      1: 100036
+    second: Mouth
+  - first:
+      1: 100038
+    second: MouthEnd
+  - first:
+      1: 100040
+    second: Neck
+  - first:
+      1: 100042
+    second: Pelvis
+  - first:
+      1: 100044
+    second: RightArm
+  - first:
+      1: 100046
+    second: RightEar
+  - first:
+      1: 100048
+    second: RightEarEnd
+  - first:
+      1: 100050
+    second: RightFoot
+  - first:
+      1: 100052
+    second: RightFootEnd
+  - first:
+      1: 100054
+    second: RightHand
+  - first:
+      1: 100056
+    second: RightHandEnd
+  - first:
+      1: 100058
+    second: RightHip
+  - first:
+      1: 100060
+    second: RightLeg1
+  - first:
+      1: 100062
+    second: RightLeg2
+  - first:
+      1: 100064
+    second: RightLeg3
+  - first:
+      1: 100066
+    second: RightShoulder
+  - first:
+      1: 100068
+    second: RightUpperArm
+  - first:
+      1: 100070
+    second: Skeleton
+  - first:
+      1: 100072
+    second: Spine
+  - first:
+      1: 100074
+    second: Tail1
+  - first:
+      1: 100076
+    second: Tail2
+  - first:
+      1: 100078
+    second: Tail3
+  - first:
+      1: 100080
+    second: Tail3 1
+  - first:
+      4: 400000
+    second: Controls
+  - first:
+      4: 400002
+    second: //RootNode
+  - first:
+      4: 400004
+    second: Eyes
+  - first:
+      4: 400006
+    second: Head
+  - first:
+      4: 400008
+    second: HeadEnd
+  - first:
+      4: 400010
+    second: LeftArm
+  - first:
+      4: 400012
+    second: LeftEar
+  - first:
+      4: 400014
+    second: LeftEarEnd
+  - first:
+      4: 400016
+    second: LeftFoot
+  - first:
+      4: 400018
+    second: LeftFootEnd
+  - first:
+      4: 400020
+    second: LeftHand
+  - first:
+      4: 400022
+    second: LeftHandEnd
+  - first:
+      4: 400024
+    second: LeftHip
+  - first:
+      4: 400026
+    second: LeftLeg1
+  - first:
+      4: 400028
+    second: LeftLeg2
+  - first:
+      4: 400030
+    second: LeftLeg3
+  - first:
+      4: 400032
+    second: LeftShoulder
+  - first:
+      4: 400034
+    second: LeftUpperArm
+  - first:
+      4: 400036
+    second: Mouth
+  - first:
+      4: 400038
+    second: MouthEnd
+  - first:
+      4: 400040
+    second: Neck
+  - first:
+      4: 400042
+    second: Pelvis
+  - first:
+      4: 400044
+    second: RightArm
+  - first:
+      4: 400046
+    second: RightEar
+  - first:
+      4: 400048
+    second: RightEarEnd
+  - first:
+      4: 400050
+    second: RightFoot
+  - first:
+      4: 400052
+    second: RightFootEnd
+  - first:
+      4: 400054
+    second: RightHand
+  - first:
+      4: 400056
+    second: RightHandEnd
+  - first:
+      4: 400058
+    second: RightHip
+  - first:
+      4: 400060
+    second: RightLeg1
+  - first:
+      4: 400062
+    second: RightLeg2
+  - first:
+      4: 400064
+    second: RightLeg3
+  - first:
+      4: 400066
+    second: RightShoulder
+  - first:
+      4: 400068
+    second: RightUpperArm
+  - first:
+      4: 400070
+    second: Skeleton
+  - first:
+      4: 400072
+    second: Spine
+  - first:
+      4: 400074
+    second: Tail1
+  - first:
+      4: 400076
+    second: Tail2
+  - first:
+      4: 400078
+    second: Tail3
+  - first:
+      4: 400080
+    second: Tail3 1
+  - first:
+      74: 7400000
+    second: Dog_Death
+  - first:
+      95: 9500000
+    second: //RootNode
+  externalObjects: {}
   materials:
-    importMaterials: 1
-    materialName: 0
-    materialSearch: 1
+    materialImportMode: 2
+    materialName: 1
+    materialSearch: 2
+    materialLocation: 0
+    searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Dog_Death
       takeName: Take 001
+      internalID: 0
       firstFrame: 0
       lastFrame: 18
       wrapMode: 0
@@ -226,26 +407,55 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 1
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -255,22 +465,20 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 87901
-  packageName: Endless Runner - Sample Game
-  packageVersion: 1.97.1
-  assetPath: Assets/Animation/Dog_Death.fbx
-  uploadId: 518529
