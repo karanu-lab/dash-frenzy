@@ -16,14 +16,13 @@ public class TrackManager : MonoBehaviour
     // ----------------------------------------------------------
     void Start()
     {
-        // Ensure tiles are correctly scaled and aligned at start to prevent gaps
+        // Ensure tiles are correctly aligned at start to prevent gaps
         if (tiles != null && tiles.Length == 3)
         {
             for (int i = 0; i < tiles.Length; i++)
             {
                 if (tiles[i] != null)
                 {
-                    tiles[i].transform.localScale = new Vector3(5f, 1f, 3f);
                     tiles[i].transform.position = new Vector3(0f, 0f, i * tileLength);
                 }
             }

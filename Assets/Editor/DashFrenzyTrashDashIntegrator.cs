@@ -171,6 +171,9 @@ public class DashFrenzyTrashDashIntegrator
             GameObject tileObj = GameObject.Find(tileName);
             if (tileObj == null) continue;
 
+            // Reset local scale to Vector3.one to prevent non-uniform scaling deforming 3D meshes
+            tileObj.transform.localScale = Vector3.one;
+
             // Clean up any old procedural props/road children
             List<GameObject> oldChildren = new List<GameObject>();
             for (int i = 0; i < tileObj.transform.childCount; i++)
