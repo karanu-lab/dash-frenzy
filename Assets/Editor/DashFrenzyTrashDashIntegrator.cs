@@ -705,7 +705,14 @@ public class DashFrenzyTrashDashIntegrator
         RenderSettings.ambientEquatorColor = new Color(0.85f, 0.85f, 0.8f);  // Warm neutral at horizon
         RenderSettings.ambientGroundColor = new Color(0.4f, 0.35f, 0.3f);    // Dark brown below
         DynamicGI.UpdateEnvironment();
-        Debug.Log("✅ Skybox fixed to clean blue sky.");
+
+        if (Camera.main != null)
+        {
+            Camera.main.clearFlags = CameraClearFlags.Skybox;
+            EditorUtility.SetDirty(Camera.main.gameObject);
+        }
+
+        Debug.Log("✅ Skybox fixed to clean blue sky and Camera set to render it.");
     }
 
     // ============================================================
