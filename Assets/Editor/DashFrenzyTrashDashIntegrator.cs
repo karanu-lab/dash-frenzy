@@ -593,6 +593,7 @@ public class DashFrenzyTrashDashIntegrator
     static void UpgradeAllSceneMaterialsToURP()
     {
         int upgraded = 0;
+        int mapped = 0;
         Renderer[] allRenderers = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None);
         Shader urpLit = Shader.Find("Universal Render Pipeline/Lit");
 
@@ -601,6 +602,9 @@ public class DashFrenzyTrashDashIntegrator
             Debug.LogWarning("URP/Lit shader not found. Material upgrade skipped.");
             return;
         }
+
+        string[] allTextures = AssetDatabase.FindAssets("t:texture2D", new[] { "Assets/Textures" });
+        Dictionary<string, Texture2D> texCache = new Dictionary<string, Texture2D>();
 
         foreach (Renderer r in allRenderers)
         {
@@ -621,6 +625,35 @@ public class DashFrenzyTrashDashIntegrator
                     if (m.HasProperty("_MainTex"))
                         mainTex = m.GetTexture("_MainTex");
 
+                    // Try name-matching texture if it's still missing
+                    if (mainTex == null)
+                    {
+                        string matName = m.name.Replace(" (Instance)", "").Trim();
+                        // Special cases
+                        if (matName.Contains("Brick")) matName = "BrickWall";
+                        if (matName.Contains("Corrugated")) matName = "CorrugatedMetal";
+                        if (matName.Contains("Plaster")) matName = "Plaster";
+                        if (matName.Contains("Wood")) matName = "Slats"; // Assuming wood uses SlatsAlbedo
+                        if (matName.Contains("Concrete")) matName = "WallAlbedo"; // fallback
+                        
+                        foreach (string guid in allTextures)
+                        {
+                            string path = AssetDatabase.GUIDToAssetPath(guid);
+                            string texName = Path.GetFileNameWithoutExtension(path);
+                            if (texName.StartsWith(matName, System.StringComparison.OrdinalIgnoreCase) || 
+                                (texName.Contains("Albedo") && texName.Replace("Albedo", "").Equals(matName, System.StringComparison.OrdinalIgnoreCase)))
+                            {
+                                if (!texCache.ContainsKey(path))
+                                {
+                                    texCache[path] = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                                }
+                                mainTex = texCache[path];
+                                mapped++;
+                                break;
+                            }
+                        }
+                    }
+
                     m.shader = urpLit;
 
                     if (m.HasProperty("_BaseColor"))
@@ -628,12 +661,13 @@ public class DashFrenzyTrashDashIntegrator
                     if (m.HasProperty("_BaseMap") && mainTex != null)
                         m.SetTexture("_BaseMap", mainTex);
 
+                    EditorUtility.SetDirty(m);
                     upgraded++;
                 }
             }
         }
 
-        Debug.Log("✅ Upgraded " + upgraded + " materials to URP/Lit.");
+        Debug.Log(string.Format("✅ Upgraded {0} materials to URP/Lit. Mapped {1} textures by name.", upgraded, mapped));
     }
 
     // ============================================================
