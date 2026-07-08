@@ -12,7 +12,7 @@
 //       Automatically adds triggers, tags them "obstacles",
 //       and assigns them to the ObstacleSpawner (removing pink cubes!).
 //    2. Decorates road tiles (Tile_001/002/003) with:
-//       - Road01 mesh as the track surface
+//       - Visual_RoadSurface (procedural visual road surface)
 //       - Cartoon buildings (Apartments, Warehouses) on the sides
 //       - Street lights and Telegraph poles
 // ============================================================
@@ -21,18 +21,44 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.SceneManagement;
 
 public class DashFrenzyTrashDashIntegrator
 {
+    const float TileLength = 30f;
+    const float PlayableRoadWidth = 6.2f;
+    const float WallX = 5.8f;
+    const float BuildingX = 10.5f;
+    const float SidePropX = 5.6f; // Placed outside x = +/-5.5f
+
     [MenuItem("Dash Frenzy/Integrate Trash Dash Assets")]
     public static void IntegrateAssets()
+    {
+        RunIntegration(true);
+    }
+
+    public static void IntegrateGameplaySceneBatch()
+    {
+        EditorSceneManager.OpenScene("Assets/Scenes/Gameplay.unity");
+        RunIntegration(false);
+        EditorSceneManager.SaveOpenScenes();
+    }
+
+    static void RunIntegration(bool showDialog)
     {
         string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         if (activeScene != "Gameplay")
         {
-            EditorUtility.DisplayDialog("Wrong Scene!",
-                "Open the 'Gameplay' scene first to integrate these environment assets.",
-                "Got it!");
+            if (showDialog)
+            {
+                EditorUtility.DisplayDialog("Wrong Scene!",
+                    "Open the 'Gameplay' scene first to integrate these environment assets.",
+                    "Got it!");
+            }
+            else
+            {
+                Debug.LogError("DashFrenzyTrashDashIntegrator: Gameplay scene is not active.");
+            }
             return;
         }
 
@@ -51,9 +77,27 @@ public class DashFrenzyTrashDashIntegrator
             Debug.Log("✅ ObstacleSpawner updated with " + obstaclePrefabs.Count + " Trash Dash prefabs.");
         }
 
+        // Align Player (Max) start position
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            player.transform.position = new Vector3(0f, 1f, 0f);
+            player.transform.rotation = Quaternion.identity;
+            EditorUtility.SetDirty(player);
+            Debug.Log("✅ Player (Max) aligned to start position (0, 1, 0).");
+        }
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        EditorSceneManager.SaveOpenScenes(); // Save Gameplay.unity after running integration
         EditorUtility.ClearProgressBar();
+
+        if (!showDialog)
+        {
+            Debug.Log("DashFrenzyTrashDashIntegrator: Integration complete.");
+            return;
+        }
 
         EditorUtility.DisplayDialog("Integration Complete!",
             "✅ " + obstaclePrefabs.Count + " obstacles wired (Dumpsters, Barriers, Cones)\n" +
@@ -148,22 +192,36 @@ public class DashFrenzyTrashDashIntegrator
     {
         string[] tiles = { "Tile_001", "Tile_002", "Tile_003" };
 
-        // Assets to place on the sides of each tile
-        string roadMeshPath = "Assets/Models/Daytime/Road01.fbx";
+        string[] roadMeshes = {
+            "Assets/Models/Daytime/Road01.fbx",
+            "Assets/Models/Daytime/Road02.fbx",
+            "Assets/Models/Daytime/Road03.fbx",
+            "Assets/Models/Daytime/Road04.fbx"
+        };
+        string[] wallMeshes = {
+            "Assets/Models/Daytime/WoodFence01.fbx",
+            "Assets/Models/Daytime/WoodFence02.fbx",
+            "Assets/Models/Daytime/TelegraphWires.fbx"
+        };
         string[] leftBuildings = {
             "Assets/Models/Daytime/Apartments01.fbx",
             "Assets/Models/Daytime/Warehouse01.fbx",
-            "Assets/Models/Daytime/Apartments02.fbx"
+            "Assets/Models/Daytime/Garage01.fbx"
         };
         string[] rightBuildings = {
             "Assets/Models/Daytime/Apartments03.fbx",
             "Assets/Models/Daytime/Warehouse02.fbx",
             "Assets/Models/Daytime/Apartments04.fbx"
         };
-        string streetLightPath = "Assets/Models/Daytime/StreetLight.fbx";
-
-        GameObject roadFBX = AssetDatabase.LoadAssetAtPath<GameObject>(roadMeshPath);
-        GameObject lightFBX = AssetDatabase.LoadAssetAtPath<GameObject>(streetLightPath);
+        string[] sideProps = {
+            "Assets/Models/Daytime/DumpsterRed.fbx",
+            "Assets/Models/Daytime/BinBagClosed.fbx",
+            "Assets/Models/Daytime/Bin01.fbx",
+            "Assets/Models/Daytime/GrassClump01.fbx",
+            "Assets/Models/Daytime/WheelyBinBlue.fbx",
+            "Assets/Models/Daytime/StreetLight.fbx",
+            "Assets/Models/Daytime/WoodFence01.fbx"
+        };
 
         int tileIndex = 0;
         foreach (string tileName in tiles)
@@ -171,79 +229,364 @@ public class DashFrenzyTrashDashIntegrator
             GameObject tileObj = GameObject.Find(tileName);
             if (tileObj == null) continue;
 
-            // Reset local scale to Vector3.one to prevent non-uniform scaling deforming 3D meshes
-            tileObj.transform.localScale = Vector3.one;
-
-            // Clean up any old procedural props/road children
-            List<GameObject> oldChildren = new List<GameObject>();
-            for (int i = 0; i < tileObj.transform.childCount; i++)
-            {
-                GameObject child = tileObj.transform.GetChild(i).gameObject;
-                if (child.name.StartsWith("Visual_") || child.name.StartsWith("Prop_"))
-                {
-                    oldChildren.Add(child);
-                }
-            }
-            foreach (GameObject oc in oldChildren) Object.DestroyImmediate(oc);
-
-            // Hide the default flat grey plane renderer so we only see the beautiful Road01 model
-            Renderer r = tileObj.GetComponent<Renderer>();
-            if (r != null) r.enabled = false;
-
-            // Instantiate new Road01 mesh as child
-            if (roadFBX != null)
-            {
-                GameObject roadInst = (GameObject)PrefabUtility.InstantiatePrefab(roadFBX);
-                roadInst.name = "Visual_Road";
-                roadInst.transform.SetParent(tileObj.transform);
-                roadInst.transform.localPosition = new Vector3(0, 0, 15f); // Center of the 30m tile
-                roadInst.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                roadInst.transform.localScale = new Vector3(1f, 1f, 1f);
-            }
-
-            // Spawn side buildings (x = -4.5m for left side, x = 4.5m for right side)
-            string leftBuildingFBX = leftBuildings[tileIndex % leftBuildings.Length];
-            string rightBuildingFBX = rightBuildings[tileIndex % rightBuildings.Length];
-            tileIndex++;
-
-            GameObject leftBuild = AssetDatabase.LoadAssetAtPath<GameObject>(leftBuildingFBX);
-            if (leftBuild != null)
-            {
-                GameObject lb = (GameObject)PrefabUtility.InstantiatePrefab(leftBuild);
-                lb.name = "Visual_LeftBuilding";
-                lb.transform.SetParent(tileObj.transform);
-                lb.transform.localPosition = new Vector3(-4.5f, 0, 15f);
-                lb.transform.localRotation = Quaternion.Euler(0, 90f, 0); // Face the road
-                lb.transform.localScale = new Vector3(1f, 1f, 1f);
-            }
-
-            GameObject rightBuild = AssetDatabase.LoadAssetAtPath<GameObject>(rightBuildingFBX);
-            if (rightBuild != null)
-            {
-                GameObject rb = (GameObject)PrefabUtility.InstantiatePrefab(rightBuild);
-                rb.name = "Visual_RightBuilding";
-                rb.transform.SetParent(tileObj.transform);
-                rb.transform.localPosition = new Vector3(4.5f, 0, 15f);
-                rb.transform.localRotation = Quaternion.Euler(0, -90f, 0); // Face the road
-                rb.transform.localScale = new Vector3(1f, 1f, 1f);
-            }
-
-            // Spawn a couple of streetlights on the left side of the track
-            if (lightFBX != null)
-            {
-                float[] zOffsets = { 5f, 25f };
-                foreach (float z in zOffsets)
-                {
-                    GameObject sl = (GameObject)PrefabUtility.InstantiatePrefab(lightFBX);
-                    sl.name = "Visual_StreetLight_" + z;
-                    sl.transform.SetParent(tileObj.transform);
-                    sl.transform.localPosition = new Vector3(-3.2f, 0, z);
-                    sl.transform.localRotation = Quaternion.Euler(0, 90f, 0);
-                    sl.transform.localScale = new Vector3(1f, 1f, 1f);
-                }
-            }
+            ResetTileForRunner(tileObj, tileIndex);
+            BuildRoad(tileObj, roadMeshes, tileIndex);
+            BuildSideEdges(tileObj, wallMeshes, tileIndex);
+            BuildBuildings(tileObj, leftBuildings, rightBuildings, tileIndex);
+            BuildSideProps(tileObj, sideProps, tileIndex);
 
             EditorUtility.SetDirty(tileObj);
+            tileIndex++;
         }
+
+        UpdateTrackManager(tiles);
+        UpdateCameraForReferenceAlley();
+    }
+
+    static void ResetTileForRunner(GameObject tileObj, int tileIndex)
+    {
+        tileObj.tag = "ground";
+        tileObj.transform.position = new Vector3(0f, 0f, tileIndex * TileLength);
+        tileObj.transform.rotation = Quaternion.identity;
+        tileObj.transform.localScale = Vector3.one;
+
+        CleanGeneratedChildren(tileObj);
+
+        // Hide default flat mesh renderer
+        Renderer renderer = tileObj.GetComponent<Renderer>();
+        if (renderer != null) renderer.enabled = false;
+
+        // Destroy any fragile mesh colliders
+        MeshCollider meshCollider = tileObj.GetComponent<MeshCollider>();
+        if (meshCollider != null) Object.DestroyImmediate(meshCollider);
+
+        // Create / overwrite a stable ground BoxCollider at y = 0
+        BoxCollider groundCollider = tileObj.GetComponent<BoxCollider>();
+        if (groundCollider == null) groundCollider = tileObj.AddComponent<BoxCollider>();
+        groundCollider.isTrigger = false;
+        groundCollider.center = new Vector3(0f, -0.06f, TileLength * 0.5f);
+        groundCollider.size = new Vector3(PlayableRoadWidth, 0.12f, TileLength);
+    }
+
+    static void CleanGeneratedChildren(GameObject tileObj)
+    {
+        List<GameObject> oldChildren = new List<GameObject>();
+        for (int i = 0; i < tileObj.transform.childCount; i++)
+        {
+            GameObject child = tileObj.transform.GetChild(i).gameObject;
+            if (child.name.StartsWith("Visual_") || child.name.StartsWith("Prop_"))
+            {
+                oldChildren.Add(child);
+            }
+        }
+
+        foreach (GameObject child in oldChildren)
+        {
+            Object.DestroyImmediate(child);
+        }
+    }
+
+    static void BuildRoad(GameObject tileObj, string[] roadMeshes, int tileIndex)
+    {
+        // 1. Create a stable, procedural Road surface cube (Y = 0 top surface)
+        GameObject roadCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        roadCube.name = "Visual_RoadSurface";
+        roadCube.transform.SetParent(tileObj.transform, false);
+        roadCube.transform.localPosition = new Vector3(0f, -0.05f, TileLength * 0.5f);
+        roadCube.transform.localScale = new Vector3(PlayableRoadWidth, 0.1f, TileLength);
+
+        // Destroy the default primitive collider to keep physics on the parent tile ground collider
+        Collider cubeCol = roadCube.GetComponent<Collider>();
+        if (cubeCol != null) Object.DestroyImmediate(cubeCol);
+
+        // Apply asphalt material
+        Material roadMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Settings/RoadAsphalt.mat");
+        if (roadMat == null) roadMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Prefabs/RoadTile.mat");
+        Renderer cubeRenderer = roadCube.GetComponent<Renderer>();
+        if (cubeRenderer != null && roadMat != null)
+        {
+            cubeRenderer.sharedMaterial = roadMat;
+        }
+
+        // 2. Add imported road mesh as decoration (if available, positioned slightly higher to overlay textures)
+        string roadPath = FirstExistingAsset(roadMeshes, tileIndex);
+        GameObject roadDeco = InstantiateAssetChild(roadPath, tileObj.transform, "Visual_RoadDeco");
+        if (roadDeco != null)
+        {
+            roadDeco.transform.localPosition = new Vector3(0f, 0.005f, TileLength * 0.5f);
+            roadDeco.transform.localRotation = Quaternion.identity;
+            roadDeco.transform.localScale = Vector3.one;
+            DisableChildColliders(roadDeco);
+        }
+    }
+
+    static void BuildSideEdges(GameObject tileObj, string[] wallMeshes, int tileIndex)
+    {
+        string leftWallPath = FirstExistingAsset(wallMeshes, tileIndex);
+        string rightWallPath = FirstExistingAsset(wallMeshes, tileIndex + 1);
+
+        for (int i = 0; i < 4; i++)
+        {
+            float z = 3f + (i * 8f);
+            GameObject leftEdge = InstantiateAssetChild(leftWallPath, tileObj.transform, "Visual_LeftEdge_" + i);
+            ConfigureSideObject(leftEdge, new Vector3(-WallX, 0f, z), Quaternion.Euler(0f, 90f, 0f), new Vector3(0.75f, 0.75f, 0.75f));
+
+            GameObject rightEdge = InstantiateAssetChild(rightWallPath, tileObj.transform, "Visual_RightEdge_" + i);
+            ConfigureSideObject(rightEdge, new Vector3(WallX, 0f, z), Quaternion.Euler(0f, -90f, 0f), new Vector3(0.75f, 0.75f, 0.75f));
+        }
+    }
+
+    static void BuildBuildings(GameObject tileObj, string[] leftBuildings, string[] rightBuildings, int tileIndex)
+    {
+        string leftPath = FirstExistingAsset(leftBuildings, tileIndex);
+        string rightPath = FirstExistingAsset(rightBuildings, tileIndex);
+
+        GameObject leftBuilding = InstantiateAssetChild(leftPath, tileObj.transform, "Visual_LeftBuilding");
+        ConfigureSideObject(leftBuilding, new Vector3(-BuildingX, 0f, 18f), Quaternion.Euler(0f, 90f, 0f), new Vector3(0.55f, 0.55f, 0.55f));
+
+        GameObject rightBuilding = InstantiateAssetChild(rightPath, tileObj.transform, "Visual_RightBuilding");
+        ConfigureSideObject(rightBuilding, new Vector3(BuildingX, 0f, 18f), Quaternion.Euler(0f, -90f, 0f), new Vector3(0.55f, 0.55f, 0.55f));
+    }
+
+    static void BuildSideProps(GameObject tileObj, string[] sideProps, int tileIndex)
+    {
+        float[] zOffsets = { 4f, 12f, 20f, 27f };
+        for (int i = 0; i < zOffsets.Length; i++)
+        {
+            string propPath = FirstExistingAsset(sideProps, tileIndex + i);
+            float side = ((tileIndex + i) % 2 == 0) ? -1f : 1f;
+            float x = side * SidePropX;
+            float yRotation = side < 0 ? 90f : -90f;
+
+            GameObject prop = InstantiateAssetChild(propPath, tileObj.transform, "Prop_Side_" + i);
+            ConfigureSideObject(prop, new Vector3(x, 0f, zOffsets[i]), Quaternion.Euler(0f, yRotation, 0f), Vector3.one);
+        }
+
+        string lightPath = "Assets/Models/Daytime/StreetLight.fbx";
+        GameObject frontLight = InstantiateAssetChild(lightPath, tileObj.transform, "Prop_LeftStreetLight");
+        ConfigureSideObject(frontLight, new Vector3(-5f, 0f, 7f), Quaternion.Euler(0f, 90f, 0f), new Vector3(0.8f, 0.8f, 0.8f));
+
+        GameObject rearLight = InstantiateAssetChild(lightPath, tileObj.transform, "Prop_RightStreetLight");
+        ConfigureSideObject(rearLight, new Vector3(5f, 0f, 23f), Quaternion.Euler(0f, -90f, 0f), new Vector3(0.8f, 0.8f, 0.8f));
+    }
+
+    static void ConfigureSideObject(GameObject obj, Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
+    {
+        if (obj == null) return;
+
+        obj.transform.localPosition = localPosition;
+        obj.transform.localRotation = localRotation;
+        obj.transform.localScale = localScale;
+        DisableChildColliders(obj);
+        PushOutsidePlayableCorridor(obj);
+    }
+
+    static void PushOutsidePlayableCorridor(GameObject obj)
+    {
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0) return;
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        float minAllowedX = 5.5f; // Target outer safety zone
+        float moveX = 0f;
+
+        if (obj.transform.position.x < 0f && bounds.max.x > -minAllowedX)
+        {
+            moveX = (-minAllowedX) - bounds.max.x;
+        }
+        else if (obj.transform.position.x > 0f && bounds.min.x < minAllowedX)
+        {
+            moveX = minAllowedX - bounds.min.x;
+        }
+
+        if (Mathf.Abs(moveX) > 0.001f)
+        {
+            obj.transform.position += new Vector3(moveX, 0f, 0f);
+        }
+    }
+
+    static GameObject InstantiateAssetChild(string assetPath, Transform parent, string name)
+    {
+        if (string.IsNullOrEmpty(assetPath)) return null;
+
+        GameObject asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        if (asset == null)
+        {
+            Debug.LogWarning("Missing environment asset: " + assetPath);
+            return null;
+        }
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(asset);
+        if (instance == null) return null;
+
+        instance.name = name;
+        instance.transform.SetParent(parent, false);
+        return instance;
+    }
+
+    static string FirstExistingAsset(string[] assetPaths, int startIndex)
+    {
+        if (assetPaths == null || assetPaths.Length == 0) return null;
+
+        for (int i = 0; i < assetPaths.Length; i++)
+        {
+            string path = assetPaths[(startIndex + i) % assetPaths.Length];
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+                return path;
+        }
+
+        return null;
+    }
+
+    static void DisableChildColliders(GameObject root)
+    {
+        Collider[] colliders = root.GetComponentsInChildren<Collider>(true);
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = false;
+        }
+    }
+
+    static void UpdateTrackManager(string[] tileNames)
+    {
+        TrackManager trackManager = Object.FindAnyObjectByType<TrackManager>();
+        if (trackManager == null) return;
+
+        List<GameObject> tiles = new List<GameObject>();
+        foreach (string tileName in tileNames)
+        {
+            GameObject tile = GameObject.Find(tileName);
+            if (tile != null) tiles.Add(tile);
+        }
+
+        if (tiles.Count == tileNames.Length)
+        {
+            trackManager.tiles = tiles.ToArray();
+            trackManager.tileLength = TileLength;
+            EditorUtility.SetDirty(trackManager);
+        }
+    }
+
+    static void UpdateCameraForReferenceAlley()
+    {
+        CameraFollow cameraFollow = Object.FindAnyObjectByType<CameraFollow>();
+        if (cameraFollow != null)
+        {
+            cameraFollow.offset = new Vector3(0f, 3.4f, -6.4f);
+            cameraFollow.smoothSpeed = 12f;
+            EditorUtility.SetDirty(cameraFollow);
+        }
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            mainCamera.fieldOfView = 58f;
+            mainCamera.backgroundColor = new Color(0.45f, 0.68f, 0.92f, 1f);
+            EditorUtility.SetDirty(mainCamera);
+        }
+    }
+
+    // ============================================================
+    //  VALIDATION METHOD
+    // ============================================================
+    [MenuItem("Dash Frenzy/Validate Gameplay Corridor")]
+    public static void ValidateGameplayCorridor()
+    {
+        string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (activeScene != "Gameplay")
+        {
+            EditorUtility.DisplayDialog("Wrong Scene!",
+                "Open the 'Gameplay' scene first to run corridor validation.", "Got it!");
+            return;
+        }
+
+        Debug.Log("=== Validating Gameplay Corridor ===");
+
+        // Check Max Player
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Debug.Log(string.Format("Max Player Position: {0} | Rigidbody: {1}",
+                player.transform.position, player.GetComponent<Rigidbody>() != null));
+            if (Mathf.Abs(player.transform.position.x) > 0.1f || Mathf.Abs(player.transform.position.z) > 0.1f)
+            {
+                Debug.LogWarning("⚠️ Player is skewed from center at start. Position: " + player.transform.position);
+            }
+        }
+        else
+        {
+            Debug.LogError("❌ No GameObject found with tag 'Player'!");
+        }
+
+        // Check Camera Follow offsets
+        CameraFollow follow = Object.FindAnyObjectByType<CameraFollow>();
+        if (follow != null)
+        {
+            Debug.Log(string.Format("Camera Follow Target: {0} | Offset: {1} | SmoothSpeed: {2}",
+                follow.player != null ? follow.player.name : "None", follow.offset, follow.smoothSpeed));
+            if (Mathf.Abs(follow.offset.x) > 0.1f)
+            {
+                Debug.LogWarning("⚠️ Camera offset is skewed sideways! offset.x: " + follow.offset.x);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No CameraFollow script found in scene!");
+        }
+
+        // Check ground and corridor positioning
+        string[] tileNames = { "Tile_001", "Tile_002", "Tile_003" };
+        foreach (string name in tileNames)
+        {
+            GameObject tile = GameObject.Find(name);
+            if (tile != null)
+            {
+                BoxCollider col = tile.GetComponent<BoxCollider>();
+                string colStr = col != null ? string.Format("Center: {0}, Size: {1}", col.center, col.size) : "No BoxCollider";
+
+                MeshCollider mesh = tile.GetComponent<MeshCollider>();
+                string meshStr = mesh != null && mesh.enabled ? "⚠️ Active MeshCollider" : "None";
+
+                Transform visuals = tile.transform.Find("Visual_RoadSurface");
+                string roadStr = visuals != null ? "Yes" : "❌ Missing Visual_RoadSurface";
+
+                Debug.Log(string.Format("Tile: {0} | Scale: {1} | Pos: {2} | GroundCollider: {3} | MeshCollider: {4} | VisualRoad: {5}",
+                    tile.name, tile.transform.localScale, tile.transform.position, colStr, meshStr, roadStr));
+
+                if (tile.transform.localScale != Vector3.one)
+                {
+                    Debug.LogError("❌ Tile scale is deformed! Scale: " + tile.transform.localScale);
+                }
+
+                // Check bounds of decorative items to make sure they are pushed out
+                Renderer[] childRenderers = tile.GetComponentsInChildren<Renderer>(true);
+                foreach (Renderer r in childRenderers)
+                {
+                    if (r.gameObject.name.StartsWith("Visual_") && !r.gameObject.name.Contains("Road"))
+                    {
+                        Bounds b = r.bounds;
+                        if (b.min.x < 5.5f && b.max.x > -5.5f)
+                        {
+                            Debug.LogWarning(string.Format("⚠️ Decorative object '{0}' bounds {1} encroach into playable road corridor!",
+                                r.gameObject.name, b));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("❌ Missing track segment: " + name);
+            }
+        }
+
+        Debug.Log("=== Validation Complete ===");
+        EditorUtility.DisplayDialog("Validation Complete",
+            "Corridor validation checks run. Inspect the Console tab for detail logs, warnings, or errors.",
+            "OK");
     }
 }
